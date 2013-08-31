@@ -14,6 +14,10 @@
     <string name="quit_question">Are you sure you want to quit?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    
+    <string name="about">About</string>
+    <string name="tictactoe_triqui">TicTacToe/Triqui</string>
+    <string name="by_gustavo_guevara">By: Gustavo Guevara</string>
+    <string name="choose_your_preferred_difficulty_level_">Choose your preferred difficulty level!</string>
+    <string name="tictactoe">TicTacToe</string>
 
 </resources>

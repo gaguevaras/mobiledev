@@ -21,19 +21,21 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int difficulty_level=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
-        public static final int new_game=0x7f020002;
-        public static final int quit=0x7f020003;
+        public static final int about=0x7f020000;
+        public static final int difficulty_level=0x7f020001;
+        public static final int ic_launcher=0x7f020002;
+        public static final int new_game=0x7f020003;
+        public static final int quit=0x7f020004;
     }
     public static final class id {
+        public static final int about=0x7f080013;
         public static final int action_settings=0x7f080012;
-        public static final int ai_difficulty=0x7f080014;
+        public static final int ai_difficulty=0x7f080015;
         public static final int eight=0x7f080008;
         public static final int five=0x7f080005;
         public static final int four=0x7f080004;
         public static final int information=0x7f08000a;
-        public static final int new_game=0x7f080013;
+        public static final int new_game=0x7f080014;
         public static final int nine=0x7f080009;
         public static final int one=0x7f080001;
         public static final int play_grid=0x7f080000;
@@ -41,7 +43,7 @@ public final class R {
         public static final int player1_score=0x7f08000d;
         public static final int player2_name=0x7f080010;
         public static final int player2_score=0x7f080011;
-        public static final int quit=0x7f080015;
+        public static final int quit=0x7f080016;
         public static final int scoreboard=0x7f08000b;
         public static final int seven=0x7f080007;
         public static final int six=0x7f080006;
@@ -51,15 +53,19 @@ public final class R {
         public static final int two=0x7f080002;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
+        public static final int about_dialog=0x7f030000;
+        public static final int activity_main=0x7f030001;
     }
     public static final class menu {
         public static final int main=0x7f070000;
         public static final int options_menu=0x7f070001;
     }
     public static final class string {
+        public static final int about=0x7f05000d;
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
+        public static final int by_gustavo_guevara=0x7f05000f;
+        public static final int choose_your_preferred_difficulty_level_=0x7f050010;
         public static final int difficulty=0x7f050004;
         public static final int difficulty_choose=0x7f050008;
         public static final int difficulty_easy=0x7f050005;
@@ -70,6 +76,8 @@ public final class R {
         public static final int no=0x7f05000c;
         public static final int quit=0x7f050009;
         public static final int quit_question=0x7f05000a;
+        public static final int tictactoe=0x7f050011;
+        public static final int tictactoe_triqui=0x7f05000e;
         public static final int yes=0x7f05000b;
     }
     public static final class style {

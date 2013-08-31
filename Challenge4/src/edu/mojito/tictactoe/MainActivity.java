@@ -4,10 +4,12 @@ import edu.mojito.tictactoe.TicTacToeGame.DifficultyLevel;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,8 @@ public class MainActivity extends Activity {
 	private static final int DIALOG_DIFFICULTY_ID = 0;
 
 	private static final int DIALOG_QUIT = 1;
+
+	private static final int DIALOG_ABOUT = 2;
 
 	// Represents the internal state of the game
 	private TicTacToeGame mGame;
@@ -164,6 +168,19 @@ public class MainActivity extends Activity {
 								}
 							}).setNegativeButton(R.string.no, null);
 			dialog = builder.create();
+
+			break;
+
+		case DIALOG_ABOUT:
+
+			AlertDialog.Builder aboutBuilder = new AlertDialog.Builder(this);
+			Context context = getApplicationContext();
+			LayoutInflater inflater = (LayoutInflater) context
+					.getSystemService(LAYOUT_INFLATER_SERVICE);
+			View layout = inflater.inflate(R.layout.about_dialog, null);
+			aboutBuilder.setView(layout);
+			aboutBuilder.setPositiveButton("OK", null);
+			dialog = aboutBuilder.create();
 		}
 
 		return dialog;
@@ -198,6 +215,10 @@ public class MainActivity extends Activity {
 
 		case R.id.quit:
 			showDialog(DIALOG_QUIT);
+			return true;
+			
+		case R.id.about:
+			showDialog(DIALOG_ABOUT);
 			return true;
 
 		default:
