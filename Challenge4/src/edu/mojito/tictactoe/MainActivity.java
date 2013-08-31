@@ -1,16 +1,27 @@
 package edu.mojito.tictactoe;
 
+import edu.mojito.tictactoe.TicTacToeGame.DifficultyLevel;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
+
+	private static final int DIALOG_DIFFICULTY_ID = 0;
+
+	private static final int DIALOG_QUIT = 1;
 
 	// Represents the internal state of the game
 	private TicTacToeGame mGame;
@@ -76,6 +87,89 @@ public class MainActivity extends Activity {
 
 	}
 
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog = null;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		switch (id) {
+		case DIALOG_DIFFICULTY_ID:
+
+			builder.setTitle(R.string.difficulty_choose);
+
+			final CharSequence[] levels = {
+					getResources().getString(R.string.difficulty_easy),
+					getResources().getString(R.string.difficulty_hard),
+					(CharSequence) getResources().getString(
+							R.string.difficulty_expert) };
+
+			int selected = 0;
+			switch (mGame.getmDifficultyLevel()) {
+			case Easy:
+				selected = 0;
+				break;
+
+			case Hard:
+				selected = 1;
+				break;
+
+			case Expert:
+				selected = 2;
+				break;
+			}
+
+			builder.setSingleChoiceItems(levels, selected,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+							dialog.dismiss();
+
+							switch (which) {
+							case 0:
+								mGame.setmDifficultyLevel(DifficultyLevel.Easy);
+								break;
+							case 1:
+								mGame.setmDifficultyLevel(DifficultyLevel.Hard);
+								break;
+							case 2:
+								mGame.setmDifficultyLevel(DifficultyLevel.Expert);
+								break;
+
+							default:
+								break;
+							}
+
+							Toast.makeText(getApplicationContext(),
+									levels[which], Toast.LENGTH_SHORT).show();
+
+						}
+					});
+			dialog = builder.create();
+
+			break;
+
+		case DIALOG_QUIT:
+			builder.setMessage(R.string.quit_question)
+					.setCancelable(false)
+					.setPositiveButton(R.string.yes,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									MainActivity.this.finish();
+
+								}
+							}).setNegativeButton(R.string.no, null);
+			dialog = builder.create();
+		}
+
+		return dialog;
+
+	}
+
 	private void updateScores() {
 		mPlayer1Score.setText("" + p1Score);
 		mPlayer2Score.setText("" + p2Score);
@@ -85,16 +179,31 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		// getMenuInflater().inflate(R.menu.main, menu);
 		super.onCreateOptionsMenu(menu);
-		menu.add("New Game");
+		getMenuInflater().inflate(R.menu.options_menu, menu);
+
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		startNewGame();
-		return true;
+		switch (item.getItemId()) {
+		case R.id.new_game:
+			startNewGame();
+			return true;
+
+		case R.id.ai_difficulty:
+			showDialog(DIALOG_DIFFICULTY_ID);
+			return true;
+
+		case R.id.quit:
+			showDialog(DIALOG_QUIT);
+			return true;
+
+		default:
+			break;
+		}
+		return false;
 	}
 
 	private void startNewGame() {
