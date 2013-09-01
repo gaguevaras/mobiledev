@@ -27,6 +27,11 @@ public class TicTacToeGame {
 
 	private DifficultyLevel mDifficultyLevel = DifficultyLevel.Expert;
 
+	public static final int NO_WINNER = 0;
+	public static final int TIE = 1;
+	public static final int HUMAN_WIN = 2;
+	public static final int COMPUTER_WIN = 3;
+	
 	public TicTacToeGame() {
 
 		// Seed the random number generator

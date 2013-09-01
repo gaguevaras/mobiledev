@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,6 +57,8 @@ public class MainActivity extends Activity {
 
 	public MediaPlayer mHumanMediaPlayer;
 	public MediaPlayer mComputerMediaPlayer;
+
+	public boolean playerMove = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -231,6 +234,7 @@ public class MainActivity extends Activity {
 
 		// redraw board
 		mBoardView.invalidate();
+		updateScores();
 
 		if (playerFirst) {
 
@@ -243,6 +247,7 @@ public class MainActivity extends Activity {
 			int move = mGame.getComputerMove();
 			setMove(TicTacToeGame.COMPUTER_PLAYER, move);
 			playerFirst = true;
+			playerMove = true;
 
 		}
 
@@ -256,6 +261,7 @@ public class MainActivity extends Activity {
 		}
 		mGame.setMove(player, location);
 		mBoardView.invalidate();
+
 	}
 
 	private OnTouchListener mTouchListener = new OnTouchListener() {
@@ -268,37 +274,54 @@ public class MainActivity extends Activity {
 			int row = (int) event.getY() / mBoardView.getCellHeight();
 			int pos = row * 3 + col;
 
-			if (!mGameOver
-					&& mGame.getBoardOccupant(pos) == TicTacToeGame.OPEN_SPOT) {
-				setMove(TicTacToeGame.HUMAN_PLAYER, pos);
+			if (playerMove) {
 
-				int winner = mGame.checkForWinner();
-
-				if (winner == 0) {
+				if (!mGameOver
+						&& mGame.getBoardOccupant(pos) == TicTacToeGame.OPEN_SPOT) {
+					setMove(TicTacToeGame.HUMAN_PLAYER, pos);
+					playerMove = false;
 					mInfoTextView.setText("It's my turn.");
-					int move = mGame.getComputerMove();
-					setMove(TicTacToeGame.COMPUTER_PLAYER, move);
-					winner = mGame.checkForWinner();
+					Handler handler = new Handler();
+					handler.postDelayed(new Runnable() {
 
-				}
+						@Override
+						public void run() {
+							int winner = mGame.checkForWinner();
+							mInfoTextView.setText("It's my turn.");
 
-				if (winner == 0) {
-					mInfoTextView.setText("It's your turn.");
-				} else if (winner == 1) {
-					mInfoTextView.setText("It's a tie!");
-					tiesScore++;
-				} else if (winner == 2) {
-					mInfoTextView.setText("You won!");
-					mGameOver = true;
-					p1Score++;
+							if (winner == 0) {
+
+								int move = mGame.getComputerMove();
+								setMove(TicTacToeGame.COMPUTER_PLAYER, move);
+								playerMove = true;
+
+								winner = mGame.checkForWinner();
+
+							}
+
+							if (winner == TicTacToeGame.NO_WINNER) {
+								mInfoTextView.setText("It's your turn.");
+							} else if (winner == TicTacToeGame.TIE) {
+								mInfoTextView.setText("It's a tie!");
+								tiesScore++;
+								updateScores();
+							} else if (winner == TicTacToeGame.HUMAN_WIN) {
+								mInfoTextView.setText("You won!");
+								mGameOver = true;
+								p1Score++;
+								updateScores();
+							} else {
+								mInfoTextView.setText("I won!");
+								mGameOver = true;
+								p2Score++;
+								updateScores();
+							}
+						}
+					}, 1500);
+
 				} else {
-					mInfoTextView.setText("I won!");
-					mGameOver = true;
-					p2Score++;
+					mInfoTextView.setText("Game is over.");
 				}
-
-			} else {
-				mInfoTextView.setText("Game is over.");
 			}
 			updateScores();
 
