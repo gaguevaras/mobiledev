@@ -1,11 +1,14 @@
 package edu.mojito.tictactoe;
 
+import java.io.IOException;
+
 import edu.mojito.tictactoe.TicTacToeGame.DifficultyLevel;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -26,10 +29,9 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private static final int DIALOG_DIFFICULTY_ID = 0;
-
 	private static final int DIALOG_QUIT = 1;
-
 	private static final int DIALOG_ABOUT = 2;
+	private static final int DIALOG_RESET = 3;
 
 	// Represents the internal state of the game
 	private TicTacToeGame mGame;
@@ -60,6 +62,8 @@ public class MainActivity extends Activity {
 
 	public boolean playerMove = true;
 
+	private SharedPreferences mPrefs;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -68,27 +72,49 @@ public class MainActivity extends Activity {
 
 		mInfoTextView = (TextView) findViewById(R.id.information);
 
+		// Scores section
 		mPlayer1Name = (TextView) findViewById(R.id.player1_name);
 		mPlayer1Score = (TextView) findViewById(R.id.player1_score);
-		mPlayer1Name.setText("You: ");
-
 		mPlayer2Name = (TextView) findViewById(R.id.player2_name);
 		mPlayer2Score = (TextView) findViewById(R.id.player2_score);
-		mPlayer2Name.setText("Me: ");
-
 		mTiesLabel = (TextView) findViewById(R.id.ties_label);
 		mTiesScore = (TextView) findViewById(R.id.ties_score);
+
+		// Set label values:
+		mPlayer1Name.setText("You: ");
+		mPlayer2Name.setText("Me: ");
 		mTiesLabel.setText("Ties: ");
 
-		updateScores();
-
-		mGame = new TicTacToeGame();
-
+		// Board
 		mBoardView = (BoardView) findViewById(R.id.board);
 		mBoardView.setOnTouchListener(mTouchListener);
+
+		// Assign a game state to the Board
+		mGame = new TicTacToeGame();
 		mBoardView.setmGame(mGame);
 
 		startNewGame();
+		mPrefs = getSharedPreferences("ttt_prefs", MODE_PRIVATE);
+		// Restore the scores
+		p1Score = mPrefs.getInt("p1Score", 0);
+		p2Score = mPrefs.getInt("p2Score", 0);
+		tiesScore = mPrefs.getInt("tiesScore", 0);
+		updateScores();
+
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+		super.onRestoreInstanceState(savedInstanceState);
+		mGame.setBoardState(savedInstanceState.getCharArray("board"));
+		mGameOver = savedInstanceState.getBoolean("mGameOver");
+		mInfoTextView.setText(savedInstanceState.getCharSequence("info"));
+		p1Score = savedInstanceState.getInt("p1Score");
+		p2Score = savedInstanceState.getInt("p2Score");
+		tiesScore = savedInstanceState.getInt("tiesScore");
+		playerFirst = savedInstanceState.getBoolean("playerFirst");
+		playerMove = savedInstanceState.getBoolean("playerMove");
 
 	}
 
@@ -182,6 +208,11 @@ public class MainActivity extends Activity {
 			aboutBuilder.setView(layout);
 			aboutBuilder.setPositiveButton("OK", null);
 			dialog = aboutBuilder.create();
+
+		case DIALOG_RESET:
+
+			p1Score = p2Score = tiesScore = 0;
+			updateScores();
 		}
 
 		return dialog;
@@ -189,9 +220,11 @@ public class MainActivity extends Activity {
 	}
 
 	private void updateScores() {
-		mPlayer1Score.setText("" + p1Score);
-		mPlayer2Score.setText("" + p2Score);
-		mTiesScore.setText("" + tiesScore);
+
+		mPlayer1Score.setText(Integer.toString(p1Score));
+		mPlayer2Score.setText(Integer.toString(p2Score));
+		mTiesScore.setText(Integer.toString(tiesScore));
+
 	}
 
 	@Override
@@ -220,6 +253,9 @@ public class MainActivity extends Activity {
 
 		case R.id.about:
 			showDialog(DIALOG_ABOUT);
+			return true;
+		case R.id.reset_scores:
+			showDialog(DIALOG_RESET);
 			return true;
 
 		default:
@@ -317,7 +353,7 @@ public class MainActivity extends Activity {
 								updateScores();
 							}
 						}
-					}, 1500);
+					}, 1000);
 
 				} else {
 					mInfoTextView.setText("Game is over.");
@@ -345,6 +381,29 @@ public class MainActivity extends Activity {
 
 		mHumanMediaPlayer.release();
 		mComputerMediaPlayer.release();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putCharArray("board", mGame.getBoardState());
+		outState.putBoolean("mGameOver", mGameOver);
+		outState.putInt("p1Score", p1Score);
+		outState.putInt("p2Score", p2Score);
+		outState.putInt("tiesScore", tiesScore);
+		outState.putCharSequence("info", mInfoTextView.getText());
+		outState.putBoolean("playerFirst", playerFirst);
+		outState.putBoolean("playerMove", playerMove);
+	}
+
+	@Override
+	protected void onStop() {
+		// Save the current scores
+		SharedPreferences.Editor ed = mPrefs.edit();
+		ed.putInt("p1Score", p1Score);
+		ed.putInt("p2Score", p2Score);
+		ed.putInt("tiesScore", tiesScore);
+		ed.commit();
 	}
 
 }

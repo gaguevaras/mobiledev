@@ -31,7 +31,7 @@ public class TicTacToeGame {
 	public static final int TIE = 1;
 	public static final int HUMAN_WIN = 2;
 	public static final int COMPUTER_WIN = 3;
-	
+
 	public TicTacToeGame() {
 
 		// Seed the random number generator
@@ -200,6 +200,17 @@ public class TicTacToeGame {
 
 	public char getBoardOccupant(int i) {
 		return mBoard[i];
+	}
+
+	public char[] getBoardState() {
+
+		return mBoard;
+	}
+
+	public void setBoardState(char[] charArray) {
+		
+		this.mBoard = charArray.clone();
+
 	}
 
 	/**

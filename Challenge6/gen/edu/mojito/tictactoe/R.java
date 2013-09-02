@@ -28,6 +28,7 @@ public final class R {
         public static final int ic_launcher=0x7f020004;
         public static final int new_game=0x7f020005;
         public static final int quit=0x7f020006;
+        public static final int reset=0x7f020007;
     }
     public static final class id {
         public static final int about=0x7f09000a;
@@ -40,7 +41,8 @@ public final class R {
         public static final int player1_score=0x7f090004;
         public static final int player2_name=0x7f090007;
         public static final int player2_score=0x7f090008;
-        public static final int quit=0x7f09000d;
+        public static final int quit=0x7f09000e;
+        public static final int reset_scores=0x7f09000d;
         public static final int scoreboard=0x7f090002;
         public static final int ties_label=0x7f090005;
         public static final int ties_score=0x7f090006;
