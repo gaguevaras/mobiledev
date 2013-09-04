@@ -398,6 +398,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onStop() {
+		super.onStop();
 		// Save the current scores
 		SharedPreferences.Editor ed = mPrefs.edit();
 		ed.putInt("p1Score", p1Score);
