@@ -22,7 +22,6 @@ public class BoardView extends View {
 	private TicTacToeGame mGame;
 
 	private int cellWidth;
-
 	private int cellHeight;
 
 	public BoardView(Context context, AttributeSet attrs, int defStyle) {

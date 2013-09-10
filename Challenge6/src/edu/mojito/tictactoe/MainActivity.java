@@ -1,16 +1,11 @@
 package edu.mojito.tictactoe;
 
-import java.io.IOException;
-
-import edu.mojito.tictactoe.TicTacToeGame.DifficultyLevel;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,12 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.mojito.tictactoe.TicTacToeGame.DifficultyLevel;
 
 public class MainActivity extends Activity {
 
@@ -99,6 +92,20 @@ public class MainActivity extends Activity {
 		p1Score = mPrefs.getInt("p1Score", 0);
 		p2Score = mPrefs.getInt("p2Score", 0);
 		tiesScore = mPrefs.getInt("tiesScore", 0);
+
+		int which = mPrefs.getInt("difficulty", 0);
+		switch (which) {
+		case 0:
+			mGame.setmDifficultyLevel(DifficultyLevel.Easy);
+			break;
+		case 1:
+			mGame.setmDifficultyLevel(DifficultyLevel.Hard);
+			break;
+		case 2:
+			mGame.setmDifficultyLevel(DifficultyLevel.Expert);
+			break;
+		}
+
 		updateScores();
 
 	}
@@ -115,6 +122,13 @@ public class MainActivity extends Activity {
 		tiesScore = savedInstanceState.getInt("tiesScore");
 		playerFirst = savedInstanceState.getBoolean("playerFirst");
 		playerMove = savedInstanceState.getBoolean("playerMove");
+
+		if (!playerMove) {
+			mInfoTextView.setText("It's my turn.");
+			Handler handler = new Handler();
+
+			handler.postDelayed(runnableHandler, 500);
+		}
 
 	}
 
@@ -291,9 +305,18 @@ public class MainActivity extends Activity {
 
 	private void setMove(char player, int location) {
 		if (player == TicTacToeGame.HUMAN_PLAYER) {
-			mHumanMediaPlayer.start();
+			try {
+				mHumanMediaPlayer.start();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} else if (player == TicTacToeGame.COMPUTER_PLAYER) {
-			mComputerMediaPlayer.start();
+			try {
+				mComputerMediaPlayer.start();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		mGame.setMove(player, location);
 		mBoardView.invalidate();
@@ -318,42 +341,8 @@ public class MainActivity extends Activity {
 					playerMove = false;
 					mInfoTextView.setText("It's my turn.");
 					Handler handler = new Handler();
-					handler.postDelayed(new Runnable() {
 
-						@Override
-						public void run() {
-							int winner = mGame.checkForWinner();
-							mInfoTextView.setText("It's my turn.");
-
-							if (winner == 0) {
-
-								int move = mGame.getComputerMove();
-								setMove(TicTacToeGame.COMPUTER_PLAYER, move);
-								playerMove = true;
-
-								winner = mGame.checkForWinner();
-
-							}
-
-							if (winner == TicTacToeGame.NO_WINNER) {
-								mInfoTextView.setText("It's your turn.");
-							} else if (winner == TicTacToeGame.TIE) {
-								mInfoTextView.setText("It's a tie!");
-								tiesScore++;
-								updateScores();
-							} else if (winner == TicTacToeGame.HUMAN_WIN) {
-								mInfoTextView.setText("You won!");
-								mGameOver = true;
-								p1Score++;
-								updateScores();
-							} else {
-								mInfoTextView.setText("I won!");
-								mGameOver = true;
-								p2Score++;
-								updateScores();
-							}
-						}
-					}, 1000);
+					handler.postDelayed(runnableHandler, 1000);
 
 				} else {
 					mInfoTextView.setText("Game is over.");
@@ -364,6 +353,7 @@ public class MainActivity extends Activity {
 			return false;
 		}
 	};
+	
 
 	@Override
 	protected void onResume() {
@@ -404,7 +394,56 @@ public class MainActivity extends Activity {
 		ed.putInt("p1Score", p1Score);
 		ed.putInt("p2Score", p2Score);
 		ed.putInt("tiesScore", tiesScore);
+		int which = 0;
+		switch (mGame.getmDifficultyLevel()) {
+		case Easy:
+			which = 0;
+			break;
+		case Hard:
+			which = 1;
+			break;
+		case Expert:
+			which = 2;
+			break;
+		}
+		ed.putInt("difficulty", which);
 		ed.commit();
 	}
+	Runnable runnableHandler = new Runnable() {
+
+		@Override
+		public void run() {
+			int winner = mGame.checkForWinner();
+			mInfoTextView.setText("It's my turn.");
+
+			if (winner == 0) {
+
+				int move = mGame.getComputerMove();
+				setMove(TicTacToeGame.COMPUTER_PLAYER, move);
+				playerMove = true;
+
+				winner = mGame.checkForWinner();
+
+			}
+
+			if (winner == TicTacToeGame.NO_WINNER) {
+				mInfoTextView.setText("It's your turn.");
+			} else if (winner == TicTacToeGame.TIE) {
+				mInfoTextView.setText("It's a tie!");
+				tiesScore++;
+				updateScores();
+			} else if (winner == TicTacToeGame.HUMAN_WIN) {
+				mInfoTextView.setText("You won!");
+				mGameOver = true;
+				p1Score++;
+				updateScores();
+			} else {
+				mInfoTextView.setText("I won!");
+				mGameOver = true;
+				p2Score++;
+				updateScores();
+			}
+		}
+	};
 
 }
