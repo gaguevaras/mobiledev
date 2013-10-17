@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Challenge8</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="create_student">Create Student</string>
+    <string name="student_name">Student Name</string>
+    <string name="student_email">E-mail</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="company_name">Company Name</string>
+    <string name="new_student">New Student</string>
+    <string name="student_form">Student Form</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="student_created">Student Created</string>
+    <string name="groups_available">Groups Available</string>
+    <string name="all_students">All Students</string>
+    <string name="all_groups">All Groups</string>
+    <string name="student_edited_">Student edited.</string>
+    <string name="delete">Delete</string>
+    <string name="student_deleted_">Student deleted.</string>
+    <string name="create_group">Create Group</string>
+    <string name="group_name">Group Name</string>
+    <string name="create_new_group">Create New Group</string>
+    <string name="group_already_exists_">Group already exists.</string>
+    <string name="group_created_">Group created.</string>
+    <string name="group_deleted_">Group deleted.</string>
+    <string name="group_edited_">Group edited.</string>
+
+</resources>
