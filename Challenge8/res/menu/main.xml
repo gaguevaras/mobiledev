@@ -15,5 +15,11 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/all_groups"/>
+    <item
+        android:id="@+id/search"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="@drawable/search"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:title="@string/search"/>
 
 </menu>

@@ -25,17 +25,18 @@ public class GroupAdapter extends ArrayAdapter<Group> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		
 		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);	
+		
 		View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
 		TextView textView = (TextView) rowView.findViewById(R.id.row_label);
 		ImageView imageView = (ImageView) rowView.findViewById(R.id.row_icon);
+		
 		textView.setText(groups.get(position).getId() + " - " + groups.get(position).getGroupName());
-		imageView.setImageResource(R.drawable.student);
+		imageView.setImageResource(R.drawable.group_icon);
 
 		return rowView;
 	}
-
-	
 
 }

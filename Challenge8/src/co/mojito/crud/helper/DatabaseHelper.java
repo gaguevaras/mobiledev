@@ -102,133 +102,133 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-/*
- * Create a student
- */
-public long createStudent(Student student, long[] groupIds) {
-	SQLiteDatabase db = this.getWritableDatabase();
+	/*
+	 * Create a student
+	 */
+	public long createStudent(Student student, long[] groupIds) {
+		SQLiteDatabase db = this.getWritableDatabase();
 
-	ContentValues values = new ContentValues();
-	values.put(KEY_NAME, student.getName());
-	values.put(KEY_EMAIL, student.getEmail());
-	values.put(KEY_COMPANY_NAME, student.getCompanyName());
-	values.put(KEY_PHONE_NUMBER, student.getPhoneNumber());
-	values.put(KEY_STATUS, student.getStatus());
-	values.put(KEY_CREATED_AT, getDateTime());
+		ContentValues values = new ContentValues();
+		values.put(KEY_NAME, student.getName());
+		values.put(KEY_EMAIL, student.getEmail());
+		values.put(KEY_COMPANY_NAME, student.getCompanyName());
+		values.put(KEY_PHONE_NUMBER, student.getPhoneNumber());
+		values.put(KEY_STATUS, student.getStatus());
+		values.put(KEY_CREATED_AT, getDateTime());
 
-	// insert row
-	long student_id = db.insert(TABLE_STUDENT, null, values);
+		// insert row
+		long student_id = db.insert(TABLE_STUDENT, null, values);
 
-	// Assign Group to Student
-	// For now a student can be in many groups. This might need to change
-	// later depending on requirements.
-	for (long group_id : groupIds) {
-		createStudentGroup(student_id, group_id);
+		// Assign Group to Student
+		// For now a student can be in many groups. This might need to change
+		// later depending on requirements.
+		for (long group_id : groupIds) {
+			createStudentGroup(student_id, group_id);
+		}
+
+		return student_id;
 	}
 
-	return student_id;
-}
+	/*
+	 * get single student
+	 */
+	public Student getStudent(long student_id) {
+		SQLiteDatabase db = this.getReadableDatabase();
 
-/*
- * get single student
- */
-public Student getStudent(long student_id) {
-	SQLiteDatabase db = this.getReadableDatabase();
+		String selectQuery = "SELECT  * FROM " + TABLE_STUDENT + " WHERE " + KEY_ID + " = "
+				+ student_id;
 
-	String selectQuery = "SELECT  * FROM " + TABLE_STUDENT + " WHERE " + KEY_ID + " = "
-			+ student_id;
+		Log.e(TAG, selectQuery);
 
-	Log.e(TAG, selectQuery);
+		Cursor c = db.rawQuery(selectQuery, null);
 
-	Cursor c = db.rawQuery(selectQuery, null);
+		if (c != null)
+			c.moveToFirst();
 
-	if (c != null)
-		c.moveToFirst();
+		Student student = new Student();
+		student.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+		student.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+		student.setCompanyName((c.getString(c.getColumnIndex(KEY_COMPANY_NAME))));
+		student.setEmail((c.getString(c.getColumnIndex(KEY_EMAIL))));
+		student.setPhoneNumber((c.getString(c.getColumnIndex(KEY_PHONE_NUMBER))));
+		student.setStatus((c.getInt(c.getColumnIndex(KEY_STATUS))));
+		student.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
 
-	Student student = new Student();
-	student.setId(c.getInt(c.getColumnIndex(KEY_ID)));
-	student.setName((c.getString(c.getColumnIndex(KEY_NAME))));
-	student.setCompanyName((c.getString(c.getColumnIndex(KEY_COMPANY_NAME))));
-	student.setEmail((c.getString(c.getColumnIndex(KEY_EMAIL))));
-	student.setPhoneNumber((c.getString(c.getColumnIndex(KEY_PHONE_NUMBER))));
-	student.setStatus((c.getInt(c.getColumnIndex(KEY_STATUS))));
-	student.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
-
-	return student;
-}
-
-/*
- * Get a list of all students
- */
-public List<Student> getAllStudents() {
-	List<Student> students = new ArrayList<Student>();
-	String selectQuery = "SELECT  * FROM " + TABLE_STUDENT;
-
-	Log.e(TAG, selectQuery);
-
-	SQLiteDatabase db = this.getReadableDatabase();
-	Cursor c = db.rawQuery(selectQuery, null);
-
-	// looping through all rows and adding to list
-	if (c.moveToFirst()) {
-		do {
-			Student student = new Student();
-			student.setId(c.getInt(c.getColumnIndex(KEY_ID)));
-			student.setName((c.getString(c.getColumnIndex(KEY_NAME))));
-			student.setCompanyName((c.getString(c.getColumnIndex(KEY_COMPANY_NAME))));
-			student.setEmail((c.getString(c.getColumnIndex(KEY_EMAIL))));
-			student.setPhoneNumber((c.getString(c.getColumnIndex(KEY_PHONE_NUMBER))));
-			student.setStatus((c.getInt(c.getColumnIndex(KEY_STATUS))));
-			student.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
-
-			// adding to student list
-			students.add(student);
-		} while (c.moveToNext());
+		return student;
 	}
 
-	return students;
-}
+	/*
+	 * Get a list of all students
+	 */
+	public List<Student> getAllStudents() {
+		List<Student> students = new ArrayList<Student>();
+		String selectQuery = "SELECT  * FROM " + TABLE_STUDENT;
 
-/*
- * Update a student
- */
-public int updateStudent(Student student) {
-	SQLiteDatabase db = this.getWritableDatabase();
+		Log.e(TAG, selectQuery);
 
-	ContentValues values = new ContentValues();
-	values.put(KEY_NAME, student.getName());
-	values.put(KEY_EMAIL, student.getEmail());
-	values.put(KEY_COMPANY_NAME, student.getCompanyName());
-	values.put(KEY_PHONE_NUMBER, student.getPhoneNumber());
-	values.put(KEY_STATUS, student.getStatus());
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor c = db.rawQuery(selectQuery, null);
 
-	// updating row
-	return db.update(TABLE_STUDENT, values, KEY_ID + " = ?",
-			new String[] { String.valueOf(student.getId()) });
-}
+		// looping through all rows and adding to list
+		if (c.moveToFirst()) {
+			do {
+				Student student = new Student();
+				student.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+				student.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+				student.setCompanyName((c.getString(c.getColumnIndex(KEY_COMPANY_NAME))));
+				student.setEmail((c.getString(c.getColumnIndex(KEY_EMAIL))));
+				student.setPhoneNumber((c.getString(c.getColumnIndex(KEY_PHONE_NUMBER))));
+				student.setStatus((c.getInt(c.getColumnIndex(KEY_STATUS))));
+				student.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
 
-/*
- * Delete a student
- */
-public void deleteStudent(long student_id) {
-	SQLiteDatabase db = this.getWritableDatabase();
-	db.delete(TABLE_STUDENT, KEY_ID + " = ?", new String[] { String.valueOf(student_id) });
-}
+				// adding to student list
+				students.add(student);
+			} while (c.moveToNext());
+		}
 
-/**
- * getting student count
- */
-public int getStudentCount() {
-	String countQuery = "SELECT  * FROM " + TABLE_STUDENT;
-	SQLiteDatabase db = this.getReadableDatabase();
-	Cursor cursor = db.rawQuery(countQuery, null);
+		return students;
+	}
 
-	int count = cursor.getCount();
-	cursor.close();
+	/*
+	 * Update a student
+	 */
+	public int updateStudent(Student student) {
+		SQLiteDatabase db = this.getWritableDatabase();
 
-	// return count
-	return count;
-}
+		ContentValues values = new ContentValues();
+		values.put(KEY_NAME, student.getName());
+		values.put(KEY_EMAIL, student.getEmail());
+		values.put(KEY_COMPANY_NAME, student.getCompanyName());
+		values.put(KEY_PHONE_NUMBER, student.getPhoneNumber());
+		values.put(KEY_STATUS, student.getStatus());
+
+		// updating row
+		return db.update(TABLE_STUDENT, values, KEY_ID + " = ?",
+				new String[] { String.valueOf(student.getId()) });
+	}
+
+	/*
+	 * Delete a student
+	 */
+	public void deleteStudent(long student_id) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(TABLE_STUDENT, KEY_ID + " = ?", new String[] { String.valueOf(student_id) });
+	}
+
+	/**
+	 * getting student count
+	 */
+	public int getStudentCount() {
+		String countQuery = "SELECT  * FROM " + TABLE_STUDENT;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+
+		int count = cursor.getCount();
+		cursor.close();
+
+		// return count
+		return count;
+	}
 
 	/*
 	 * getting all students in a group
@@ -443,6 +443,35 @@ public int getStudentCount() {
 		SQLiteDatabase db = this.getReadableDatabase();
 		if (db != null && db.isOpen())
 			db.close();
+	}
+
+	public List<Student> searchStudentsByName(String query) {
+		List<Student> students = new ArrayList<Student>();
+		SQLiteDatabase db = this.getReadableDatabase();
+		String selectQuery = "SELECT  * FROM " + TABLE_STUDENT + " WHERE " + KEY_NAME
+				+ " LIKE '%" + query + "%'";
+
+		Log.e(TAG, selectQuery);
+
+		Cursor c = db.rawQuery(selectQuery, null);
+		
+		if (c.moveToFirst()) {
+			do {
+				Student student = new Student();
+				student.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+				student.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+				student.setCompanyName((c.getString(c.getColumnIndex(KEY_COMPANY_NAME))));
+				student.setEmail((c.getString(c.getColumnIndex(KEY_EMAIL))));
+				student.setPhoneNumber((c.getString(c.getColumnIndex(KEY_PHONE_NUMBER))));
+				student.setStatus((c.getInt(c.getColumnIndex(KEY_STATUS))));
+				student.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
+
+				// adding to student list
+				students.add(student);
+			} while (c.moveToNext());
+		}
+		
+		return students;
 	}
 
 }

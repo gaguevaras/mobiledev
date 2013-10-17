@@ -1,7 +1,11 @@
 package co.mojito.crud;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 import co.mojito.crud.adapter.GroupAdapter;
 import co.mojito.crud.adapter.StudentAdapter;
@@ -68,6 +73,28 @@ public class MainActivity extends Activity {
 
 		db.closeDB();
 
+		handleIntent(getIntent());
+
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+
+		handleIntent(intent);
+	}
+
+	private void handleIntent(Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			Log.d(TAG, "Searching using query: " + query);
+
+			adapter = new StudentAdapter(getBaseContext(), db.searchStudentsByName(query));
+			listView.setAdapter(adapter);
+			listView.setOnItemClickListener(new StudentClickListener());
+			db.closeDB();
+
+		}
+
 	}
 
 	private void refreshGroupList() {
@@ -79,10 +106,18 @@ public class MainActivity extends Activity {
 
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+			SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+			searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+			searchView.setIconifiedByDefault(false);
+		}
 		return true;
 	}
 
@@ -101,6 +136,10 @@ public class MainActivity extends Activity {
 			case R.id.show_all_groups:
 				refreshGroupList();
 				break;
+
+			case R.id.search:
+				onSearchRequested();
+				return true;
 		}
 		return false;
 	}

@@ -27,5 +27,8 @@
     <string name="group_created_">Group created.</string>
     <string name="group_deleted_">Group deleted.</string>
     <string name="group_edited_">Group edited.</string>
+    <string name="icon_for_current_row_">Icon for current row.</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Search students or groups</string>
 
 </resources>
