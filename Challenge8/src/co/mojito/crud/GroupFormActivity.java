@@ -18,19 +18,10 @@ public class GroupFormActivity extends Activity {
 	private static final String TAG = "GroupFormActivity";
 
 	private int mode;
-
-	//
-	// Identificador del registro que se edita cuando la opción es MODIFICAR
-	//
 	private Group group;
 
-	//
-	// Elementos de la vista
-	//
 	private EditText name;
-
 	private Button deleteBtn;
-
 	private DatabaseHelper db;
 
 	@Override
@@ -54,9 +45,7 @@ public class GroupFormActivity extends Activity {
 
 		db = new DatabaseHelper(getApplicationContext());
 
-		//
-		// Obtenemos el identificador del registro si viene indicado
-		//
+		// If there is an entity id in the Intent.
 		if (extra.containsKey(DatabaseHelper.KEY_ID)) {
 			group = db.getGroup(extra.getInt(DatabaseHelper.KEY_ID));
 			updateFields(group);
@@ -65,27 +54,10 @@ public class GroupFormActivity extends Activity {
 		List<Group> list = db.getAllGroups();
 		Log.d(TAG, "Group count: " + list.size());
 
-		//
-		// Establecemos el mode del formulario
-		//
+		// Set the mode.
 		setMode(extra.getInt(MainActivity.MODE));
 
 		db.closeDB();
-
-	}
-
-	private void setMode(int m) {
-		this.mode = m;
-
-		if (mode == MainActivity.MODE_CREATE) {
-			this.setTitle(R.string.create_new_group);
-			this.setEditable(true);
-		}
-	}
-
-	private void updateFields(Group group) {
-
-		name.setText(group.getGroupName());
 
 	}
 
@@ -95,8 +67,6 @@ public class GroupFormActivity extends Activity {
 			group = new Group();
 			group.setGroupName(name.getText().toString());
 
-			// This shit can be fixed by implementing GroupAdapter properly
-			// instead of using ArrayAdapter<Group>
 			long groupId = db.createGroup(group);
 
 			if (groupId != -1) {
@@ -125,11 +95,6 @@ public class GroupFormActivity extends Activity {
 
 	}
 
-	public void cancel(View view) {
-		setResult(RESULT_CANCELED);
-		finish();
-	}
-
 	public void deleteGroup(View view) {
 
 		if (group != null) {
@@ -146,9 +111,29 @@ public class GroupFormActivity extends Activity {
 
 	}
 
+	public void cancel(View view) {
+		setResult(RESULT_CANCELED);
+		finish();
+	}
+
+	private void updateFields(Group group) {
+
+		name.setText(group.getGroupName());
+
+	}
+
 	private void setEditable(boolean editable) {
 		name.setEnabled(editable);
 
+	}
+
+	private void setMode(int m) {
+		this.mode = m;
+
+		if (mode == MainActivity.MODE_CREATE) {
+			this.setTitle(R.string.create_new_group);
+			this.setEditable(true);
+		}
 	}
 
 }

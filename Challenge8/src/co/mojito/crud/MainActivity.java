@@ -51,29 +51,21 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.group_activity_layout);
+		setContentView(R.layout.main_activity_layout);
 
 		db = new DatabaseHelper(getBaseContext());
 
 		Toast.makeText(getBaseContext(), "Database prepared.", Toast.LENGTH_LONG).show();
 
-		// Group group = new Group("ControlZeta");
-		// long group_id = db.createGroup(group);
-
 		Log.d("Group Count", "Group Count: " + db.getAllGroups().size());
-
-		// Student student = new Student("Gustavo", "3015866282", "ControlZeta",
-		// "gustavo.andres.guevara@gmail.com", 0);
-		// db.createStudent(student, new long[] { group_id });
 
 		Log.e("Student Count", "Student count: " + db.getStudentCount());
 
 		listView = (ListView) findViewById(android.R.id.list);
 		refreshGroupList();
 
-		db.closeDB();
-
 		handleIntent(getIntent());
+		db.closeDB();
 
 	}
 
@@ -126,7 +118,7 @@ public class MainActivity extends Activity {
 
 		switch (item.getItemId()) {
 			case R.id.action_settings:
-				// TODO: Settings for the app.
+			
 				break;
 
 			case R.id.show_all_students:
