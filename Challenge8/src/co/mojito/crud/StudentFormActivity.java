@@ -37,7 +37,7 @@ public class StudentFormActivity extends Activity {
 	private EditText email;
 	private EditText phoneNumber;
 	private EditText companyName;
-	private Spinner group;
+	private Spinner groupSpinner;
 
 	private Button deleteBtn;
 
@@ -59,7 +59,7 @@ public class StudentFormActivity extends Activity {
 		email = (EditText) findViewById(R.id.student_email);
 		phoneNumber = (EditText) findViewById(R.id.student_phone_number);
 		companyName = (EditText) findViewById(R.id.student_company_name);
-		group = (Spinner) findViewById(R.id.spinner_groups);
+		groupSpinner = (Spinner) findViewById(R.id.spinner_groups);
 
 		if (intent.getExtras().getInt(MainActivity.MODE) == MainActivity.MODE_EDIT) {
 			deleteBtn = (Button) findViewById(R.id.delete_button);
@@ -97,7 +97,7 @@ public class StudentFormActivity extends Activity {
 		ArrayAdapter<Group> dataAdapter = new ArrayAdapter<Group>(this,
 				android.R.layout.simple_spinner_item, list);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		group.setAdapter(dataAdapter);
+		groupSpinner.setAdapter(dataAdapter);
 
 		//
 		// Establecemos el mode del formulario
@@ -135,10 +135,8 @@ public class StudentFormActivity extends Activity {
 			student.setEmail(email.getText().toString());
 			student.setPhoneNumber(phoneNumber.getText().toString());
 
-			// This shit can be fixed by implementing GroupAdapter properly
-			// instead of using ArrayAdapter<Group>
 			long studentId = db.createStudent(student,
-					new long[] { ((Group) group.getSelectedItem()).getId() });
+					new long[] { ((Group) groupSpinner.getSelectedItem()).getId() });
 
 			Log.d(TAG, "Student created with id: " + studentId);
 			setResult(RESULT_OK);
